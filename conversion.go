@@ -293,7 +293,7 @@ func FromString(s string) (Number, error) {
 	}
 
 	neg := false
-	i := 0
+	var i uint
 	switch s[0] {
 	case '-':
 		neg = true
@@ -304,13 +304,13 @@ func FromString(s string) (Number, error) {
 
 	overflow, inexact := false, false
 	start := i
-	for i < len(s) && s[i] == '0' {
+	for i < uint(len(s)) && s[i] == '0' {
 		i++
 	}
 
 	var intVal uint64
 	intDigits := 0
-	for ; i < len(s) && s[i] >= '0' && s[i] <= '9'; i++ {
+	for ; i < uint(len(s)) && s[i] >= '0' && s[i] <= '9'; i++ {
 		intVal = intVal*10 + uint64(s[i]-'0')
 		intDigits++
 	}
@@ -321,10 +321,10 @@ func FromString(s string) (Number, error) {
 
 	var fracVal uint64
 	fracDigits := 0
-	if i < len(s) && s[i] == '.' {
+	if i < uint(len(s)) && s[i] == '.' {
 		i++
 		fracStart := i
-		for ; i < len(s) && s[i] >= '0' && s[i] <= '9'; i++ {
+		for ; i < uint(len(s)) && s[i] >= '0' && s[i] <= '9'; i++ {
 			d := s[i] - '0'
 			if fracDigits < Scale {
 				fracVal = fracVal*10 + uint64(d)
@@ -338,7 +338,7 @@ func FromString(s string) (Number, error) {
 
 	// Anything left over is not part of a number, and a syntax error takes
 	// precedence over a value that does not fit.
-	if i != len(s) {
+	if i != uint(len(s)) {
 		return Number{}, ErrNaN
 	}
 	if !hasDigits {

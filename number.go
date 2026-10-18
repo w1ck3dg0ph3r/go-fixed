@@ -18,8 +18,8 @@ var (
 	E  = MustFromString("2.7182818284590452354")
 	Pi = MustFromString("3.1415926535897932385")
 
-	Lowest  = MustFromString("-9999999999999999999.9999999999999999999")
-	Highest = MustFromString("9999999999999999999.9999999999999999999")
+	Lowest  = Number{maxNegLo64, maxNegHi64}
+	Highest = Number{maxPosLo64, maxPosHi64}
 )
 
 const (

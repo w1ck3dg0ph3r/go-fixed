@@ -835,7 +835,8 @@ func reciprocal64(d uint64) uint64 {
 	d0 := d & 1
 	d40 := d>>24 + 1
 	d63 := d>>1 + d0
-	v0 := uint64(reciprocalTable[d>>55-256])
+	// d>>55 is in [256, 512), so masking subtracts 256 without a bounds check.
+	v0 := uint64(reciprocalTable[d>>55&0xff])
 	v1 := v0<<11 - (v0*v0*d40)>>40 - 1
 	v2 := v1<<13 + (v1*(1<<60-v1*d40))>>47
 	e := (v2>>1)&-d0 - v2*d63

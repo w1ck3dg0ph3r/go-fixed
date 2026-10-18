@@ -357,6 +357,7 @@ func bitLenWords(w []uint64) int {
 
 // cmpWords compares the little-endian words a and b of the same length.
 func cmpWords(a, b []uint64) int {
+	b = b[:len(a)]
 	for i, v := range slices.Backward(a) {
 		if v != b[i] {
 			if v < b[i] {
