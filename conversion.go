@@ -11,7 +11,7 @@ type Int interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64
 }
 
-// FromInt constructs [Number] from integer v.
+// FromInt constructs a [Number] from integer v.
 func FromInt[T Int](v T) Number {
 	i := int64(v)
 	hi, lo := bits.Mul64(uint64(i), pow10u64Scale)
@@ -21,7 +21,7 @@ func FromInt[T Int](v T) Number {
 // Int returns the integer part of n, truncated towards zero.
 //
 // Returns zero, if n is invalid.
-// Wraps, if the result does not fit into an int.
+// Wraps if the result does not fit into an int.
 func (n Number) Int() int {
 	if !n.Valid() {
 		return 0
@@ -33,7 +33,7 @@ type Uint interface {
 	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
 }
 
-// FromUint constructs [Number] from unsigned integer v.
+// FromUint constructs a [Number] from unsigned integer v.
 //
 // Returns [Overflow] if v does not fit into Number.
 func FromUint[T Uint](v T) Number {
@@ -47,7 +47,7 @@ func FromUint[T Uint](v T) Number {
 // Uint returns the integer part of n, truncated towards zero.
 //
 // Returns zero, if n is invalid.
-// Wraps, if the result is negative or does not fit into an uint.
+// Wraps if the result is negative or does not fit into a uint.
 func (n Number) Uint() uint {
 	if !n.Valid() {
 		return 0
@@ -55,7 +55,7 @@ func (n Number) Uint() uint {
 	return uint(intPart(n))
 }
 
-// FromFloat64 constructs [Number] from f using its shortest representation.
+// FromFloat64 constructs a [Number] from f using its shortest representation.
 //
 // Digits of that representation beyond Scale are rounded half to even. Returns
 // NaN if f is not finite, and Overflow if it does not fit.
@@ -179,7 +179,7 @@ func shortDecimal(a float64, k int) (uint64, bool) {
 	return d, float64(d)/pow10f64[k] == a
 }
 
-// FromFloat64Exact constructs [Number] using the exact binary value of f rounded half to even.
+// FromFloat64Exact constructs a [Number] using the exact binary value of f rounded half to even.
 //
 // Returns NaN if f is not finite, and Overflow if it does not fit.
 func FromFloat64Exact(f float64) Number {

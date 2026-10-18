@@ -11,14 +11,15 @@ import (
 )
 
 func Example() {
-	price := fixed.New(1999, -2) // 19.99
-	rate := fixed.New(825, -4)   // 0.0825
+	price := fixed.MustFromString("19.99")
+	rate := fixed.MustFromString("0.0825")
+	quantity := 3
 
-	subtotal := price.Mul(fixed.FromInt(3))             // 59.97
+	subtotal := price.MulInt(quantity)                  // 59.97
 	tax := subtotal.Mul(rate).Round(2, fixed.RoundBank) // 4.947525 -> 4.95
 	total := subtotal.Add(tax)                          // 64.92
 
-	share := total.Div(fixed.FromInt(7)) // 9.2742857142857142857
+	share := total.DivInt(7) // 9.2742857142857142857
 	if err := share.Err(); err != nil {
 		// NaN, overflow or division by zero anywhere above.
 	}

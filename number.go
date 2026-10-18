@@ -34,7 +34,7 @@ const (
 	maxStrLen = Precision + 2
 )
 
-// New constructs [Number] coef*10^exp, e.g. New(12345, -2) is 123.45.
+// New constructs a [Number] coef*10^exp, e.g. New(12345, -2) is 123.45.
 //
 // Returns [Overflow] if it does not fit, and [NaN] if it has nonzero digits
 // beyond Scale decimal places.
@@ -84,7 +84,7 @@ func New(coef int64, exp int) Number {
 	return n
 }
 
-// NewWords constructs [Number] from its low and high words.
+// NewWords constructs a [Number] from its low and high words.
 //
 // Returns the error if the words are not a valid number.
 func NewWords(lo, hi uint64) (Number, error) {
@@ -116,7 +116,7 @@ func (n Number) IsNegative() bool {
 	return n.Hi&(1<<63) > 0
 }
 
-// Abs returns absolute value of n.
+// Abs returns the absolute value of n.
 func (n Number) Abs() Number {
 	// Branchless version only wins on random signs, which is not a typical use
 	// case.
@@ -142,7 +142,7 @@ func (n Number) Neg() Number {
 	return Number{lo, hi}
 }
 
-// Cmp returns -1, 0 or 1 if n is less than, equal or greater than b.
+// Cmp returns -1, 0 or 1 if n is less than, equal to or greater than b.
 func (n Number) Cmp(b Number) int {
 	if n.Hi != b.Hi {
 		if int64(n.Hi) < int64(b.Hi) {
@@ -164,7 +164,7 @@ func (n Number) Eq(b Number) bool {
 	return n == b
 }
 
-// Lt returns true of n is less than b.
+// Lt returns true if n is less than b.
 func (n Number) Lt(b Number) bool {
 	return n.Cmp(b) < 0
 }

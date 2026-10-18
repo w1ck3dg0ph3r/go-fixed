@@ -1,10 +1,7 @@
-// Package fixed provides an allocation-free 128-bit fixed-point decimal type
-// for money and other exact base-10 values.
+// Package fixed provides a fast, allocation-free 128-bit fixed-point decimal type for Go, designed for
+// monetary and other values that must be exact in base 10.
 //
-// A [Number] has 19 decimal places and a range of
-// ±9999999999999999999.9999999999999999999. Mul and Div truncate at the last
-// place; [Number.Round], [Number.MulRound] and [Number.DivRound] take an
-// explicit rounding mode. Failed operations return a sentinel (NaN, Overflow,
-// DivisionByZero) that propagates through later operations; check it once with
-// [Number.Err].
+// A number is a plain, immutable 16-byte value that is safe to copy and compare bytewise.
+// Operations that can round take an explicit rounding mode (with short aliases that truncate).
+// Failed operations return sentinel values that propagate through the operation chain.
 package fixed
