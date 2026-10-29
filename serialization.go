@@ -107,7 +107,7 @@ func (n *Number) unmarshalJSON(v jsontext.Value) error {
 	case 'n':
 		return nil
 	case '"':
-		if len(b) < 2 {
+		if len(b) < 2 || b[len(b)-1] != '"' {
 			return ErrNaN
 		}
 		if bytes.IndexByte(b, '\\') < 0 {

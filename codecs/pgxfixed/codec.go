@@ -58,8 +58,11 @@ func (c NumericCodec) PlanScan(m *pgtype.Map, oid uint32, format int16, target a
 var errInvalidBinary = errors.New("pgxfixed: invalid numeric binary data")
 
 const (
-	signPos = 0x0000
-	signNeg = 0x4000
+	signPos    = 0x0000
+	signNeg    = 0x4000
+	signNaN    = 0xc000
+	signPosInf = 0xd000
+	signNegInf = 0xf000
 )
 
 type encodePlanText struct{}
@@ -181,8 +184,10 @@ func decodeBinary(src []byte) (fixed.Number, error) {
 	}
 	switch sign {
 	case signPos, signNeg:
-	default:
+	case signNaN, signPosInf, signNegInf:
 		return fixed.Number{}, fixed.ErrNaN
+	default:
+		return fixed.Number{}, errInvalidBinary
 	}
 
 	var q, f uint64

@@ -176,10 +176,12 @@ func TestScanErrors(t *testing.T) {
 			{0, 1},
 			{0, 1, 0, 0, 0, 0, 0, 0},
 			{0, 1, 0, 0, 0, 0, 0, 0, 0x27, 0x10},
+			{0, 0, 0, 0, 0x12, 0x34, 0, 0},
 		} {
 			var r fixed.Number
-			if err := m.Scan(pgtype.NumericOID, pgtype.BinaryFormatCode, buf, &r); err == nil {
-				t.Errorf("%x: expected error, got %q", buf, r)
+			err := m.Scan(pgtype.NumericOID, pgtype.BinaryFormatCode, buf, &r)
+			if err == nil || errors.Is(err, fixed.ErrNaN) {
+				t.Errorf("%x: expected malformed data error, got %q (%v)", buf, r, err)
 			}
 		}
 	})
@@ -262,8 +264,11 @@ func TestAllocs(t *testing.T) {
 	}
 }
 
-// TestDatabase round-trips values through a real server when
-// PGX_TEST_DATABASE is set to its connection string.
+// TestDatabase round-trips values through a real server when PGX_TEST_DATABASE
+// is set to its connection string.
+//
+//	podman run --rm -d --name pgxfixed-test -e POSTGRES_PASSWORD=postgres -p 5432:5432 docker.io/library/postgres:18
+//	PGX_TEST_DATABASE='postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable'
 func TestDatabase(t *testing.T) {
 	dsn := os.Getenv("PGX_TEST_DATABASE")
 	if dsn == "" {

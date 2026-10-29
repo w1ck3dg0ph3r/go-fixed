@@ -495,7 +495,7 @@ func sub128Checked(a, b Number) (Number, bool) {
 	return Number{lo, hi}, false
 }
 
-// abs64 returns the magnitude of k, which fits even for the smallest int64.
+// abs64 returns the magnitude of v, which fits even for the smallest int64.
 func abs64(v int64) uint64 {
 	s := uint64(v >> 63)
 	return (uint64(v) ^ s) - s

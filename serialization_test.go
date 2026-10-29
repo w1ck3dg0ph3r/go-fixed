@@ -257,8 +257,13 @@ func TestUnmarshalJSONMalformed(t *testing.T) {
 	t.Parallel()
 
 	var r fixed.Number
-	if err := r.UnmarshalJSON([]byte(`"`)); err != fixed.ErrNaN {
-		t.Errorf("expected err %v, got %v", fixed.ErrNaN, err)
+	for _, in := range []string{
+		`"`,
+		`"12`,
+	} {
+		if err := r.UnmarshalJSON([]byte(in)); err != fixed.ErrNaN {
+			t.Errorf("%s: expected err %v, got %v", in, fixed.ErrNaN, err)
+		}
 	}
 
 	if err := r.UnmarshalJSON([]byte(`"0\FF"`)); err == nil || !strings.Contains(err.Error(), "invalid escape sequence") {
