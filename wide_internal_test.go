@@ -122,6 +122,8 @@ func TestRoundSnap(t *testing.T) {
 		// and 1.
 		{wide{m: nines, e: -53, inexact: true}, false, RoundZero, 50, n("10")},
 		{wide{m: nines, e: -54, inexact: true}, false, RoundZero, 50, n("1")},
+		// 1+10^-39 is only 20 places below the last one, inside the window.
+		{wide{m: [3]uint64{0x92438d7ea4c68000, 0xc51999090b65f67d, 0xa70c3c40a64e6}, e: -54, inexact: true}, false, RoundInf, 50, n("1.0000000000000000001")},
 		// With too few trusted digits below the last place, it rounds as usual.
 		{wide{m: nines, e: -54, inexact: true}, false, RoundZero, 25, n("0.9999999999999999999")},
 		// An integer coefficient needs no snapping.

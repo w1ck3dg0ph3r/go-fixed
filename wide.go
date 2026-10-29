@@ -8,8 +8,9 @@ import (
 // wide is a decimal floating point value m*10^e with a 192-bit mantissa, about
 // 57 digits, for intermediate results that need more precision than a Number.
 //
-// Operations truncate the mantissa, so a wide value never exceeds the exact
-// one, and inexact records that some nonzero digits were dropped.
+// Operations truncate the mantissa, and inexact records that some nonzero
+// digits were dropped. Sub truncates the subtrahend as it aligns it, so its
+// difference can exceed the exact one.
 type wide struct {
 	m       [3]uint64 // Little-endian words.
 	e       int
@@ -267,10 +268,10 @@ func (a wide) RoundSnap(neg bool, mode RoundingMode, trusted int) Number {
 		return a.Round(neg, mode)
 	}
 
-	// Keep the trusted digits below the last place, up to Scale of them; with
-	// fewer than 10 the snapping would catch too much, so round as usual.
+	// Keep the trusted digits below the last place; with fewer than 10 the
+	// snapping would catch too much, so round as usual.
 	_, hi := a.Magnitude()
-	keep := min(Scale, trusted-hi-Scale, -k)
+	keep := min(trusted-hi-Scale, -k)
 	if keep < 10 {
 		return a.Round(neg, mode)
 	}
@@ -285,25 +286,37 @@ func (a wide) RoundSnap(neg bool, mode RoundingMode, trusted int) Number {
 			drop -= c
 		}
 	}
-	g := divWordsPow10(m[:], keep)
+
+	// The kept digits past the top Scale only matter for being all zeros or
+	// all nines; the top ones g are compared to the unit and half.
+	zeros, nines := true, true
+	for low := keep - min(keep, Scale); low > 0; {
+		c := min(low, Scale)
+		r := divWordsPow10(m[:], c)
+		zeros = zeros && r == 0
+		nines = nines && r == pow10u64[c]-1
+		low -= c
+	}
+	unit := pow10u64[min(keep, Scale)]
+	g := divWordsPow10(m[:], min(keep, Scale))
 	if m[2] != 0 {
 		return Overflow
 	}
 
 	q := Number{m[0], m[1]}
-	unit := pow10u64[keep]
 	half := unit / 2
 	switch {
-	case g == unit-1:
+	case g == unit-1 && nines:
 		// Just below the next number, so exactly it.
 		q = add64(q, 1)
-	case g == 0 && !q.IsZero():
+	case g == 0 && zeros && !q.IsZero():
 		// Exactly q. A positive result is never exactly zero, so a zero q is
 		// left to round below.
-	case g == half || g == half-1:
+	case g == half && zeros || g == half-1 && nines:
 		q = add64(q, mode.increment(boolu64(neg), 0, 1, q.Lo&1))
 	case mode != RoundZero:
-		q = add64(q, mode.increment(boolu64(neg), boolu64(g > half), 0, q.Lo&1))
+		above := g > half || g == half && !zeros
+		q = add64(q, mode.increment(boolu64(neg), boolu64(above), 0, q.Lo&1))
 	}
 	if q.Hi > maxPosHi64 || (q.Hi == maxPosHi64 && q.Lo > maxPosLo64) {
 		return Overflow

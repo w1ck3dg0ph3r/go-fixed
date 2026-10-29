@@ -36,8 +36,10 @@ func (n Number) PowInt(m int) Number {
 // PowIntRound raises n to the integer power m, rounding the result to Scale
 // places according to mode.
 //
-// The power is computed with about 57 significant digits and rounded once, so
-// the result is the exact power correctly rounded.
+// The power is computed with about 57 significant digits, falling to about 42
+// for exponents near 2^63 as each squaring doubles the error, and rounded once,
+// so the result is correctly rounded unless the exact power is that close to a
+// rounding boundary.
 func (n Number) PowIntRound(m int, mode RoundingMode) Number {
 	if !n.valid() {
 		return n
