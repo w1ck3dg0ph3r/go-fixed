@@ -5,7 +5,7 @@ FUZZTIME ?= 1000000x
 default:
 	@echo "Usage:"
 	@echo "  make test            - run all tests and record coverage"
-	@echo "  make lint            - run go vet and check formatting"
+	@echo "  make lint            - run go vet and mod tidy, check formatting"
 	@echo "  make bench [BENCH=.] - run some or all benchmarks"
 	@echo "  make fuzz  [FUZZ=.]  - run one or all fuzz tests"
 .PHONY: default
@@ -25,12 +25,12 @@ test-fixed:
 
 test-pgxfixed:
 	@cd codecs/pgxfixed &&\
-	go test ${TESTFLAGS} .
+	GOWORK=off go test ${TESTFLAGS} .
 .PHONY: test-pgxfixed
 
 test-jxfixed:
 	@cd codecs/jxfixed &&\
-	go test ${TESTFLAGS} .
+	GOWORK=off go test ${TESTFLAGS} .
 .PHONY: test-jxfixed
 
 test-benchmarks:
@@ -43,17 +43,29 @@ test-fuzzing:
 	go test .
 .PHONY: test-fuzzing
 
-lint:
+lint: lint-fmt lint-tidy lint-vet
+.PHONY: lint
+
+lint-fmt:
 	@unformatted=$$(gofmt -l .) ;\
 	if [ -n "$$unformatted" ]; then \
 		echo "not formatted with gofmt:" ;\
 		echo "$$unformatted" ;\
 		exit 1 ;\
 	fi
+.PHONY: lint-fmt
+
+lint-tidy:
 	@for m in $(MODULES); do \
-		(cd $$m && go vet ./...) || exit 1 ;\
+		(cd $$m && GOWORK=off go mod tidy -diff) || { echo "go.mod not tidy in $$m" ; exit 1 ; } ;\
 	done
-.PHONY: lint
+.PHONY: lint-tidy
+
+lint-vet:
+	@for m in $(MODULES); do \
+		(cd $$m && GOWORK=off go vet ./...) || exit 1 ;\
+	done
+.PHONY: lint-vet
 
 bench:
 	@cd benchmarks &&\

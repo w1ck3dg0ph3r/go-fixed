@@ -4,6 +4,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/jokruger/dec128 v1.4.0 h1:8+fbylWdTHVZSi839BOXD4Iou6JpNw1euw6n7xRDrDk=
 github.com/jokruger/dec128 v1.4.0/go.mod h1:XmLxm2Jow2CB5IBBR/VhC4MiAkwBzvP9nZBO9n/1VXI=
+github.com/lib/pq v1.10.7 h1:p7ZhMD+KsSRozJr34udlUrhboJwWAgCg34+/ZZNvZZw=
+github.com/lib/pq v1.10.7/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/quagmt/udecimal v1.10.0 h1:r8VgL1ns0HruRrTX4aRRIE4J5FGdjd1sGRwG7eZGx7A=
